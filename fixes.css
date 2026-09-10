@@ -1,0 +1,4 @@
+/* UI state overrides kept separate so browser hidden-state wins over the base grid layout. */
+.empty-camera[hidden] {
+  display: none !important;
+}

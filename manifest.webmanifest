@@ -1,0 +1,12 @@
+{
+  "name": "TRACE",
+  "short_name": "TRACE",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0B1437",
+  "theme_color": "#0B1437",
+  "description": "Offline lead-acetate H2S strip reader",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

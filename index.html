@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0B1437" />
+  <title>TRACE</title>
+  <link rel="icon" href="icon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="fixes.css" />
+</head>
+<body>
+  <!-- One continuous artwork, panned vertically as the workspace changes. -->
+  <div class="bg-slideshow" aria-hidden="true">
+    <div class="bg-slide bg-workspace scene-capture"></div>
+  </div>
+
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+  </div>
+
+  <aside class="sidebar" data-reveal>
+    <div class="brand"><img class="mark" src="icon.png" alt="TRACE" /><div><strong>TRACE</strong><small>H₂S strip reader</small></div></div>
+    <p class="nav-label">Workspace</p>
+    <nav class="tabs" aria-label="Application sections">
+      <button class="tab active" data-view="capture"><span class="nav-icon">◎</span> Capture</button>
+      <button class="tab" data-view="workers"><span class="nav-icon">◉</span> Workers &amp; shifts</button>
+      <button class="tab" data-view="calibration"><span class="nav-icon">✦</span> Calibration</button>
+      <button class="tab" data-view="records"><span class="nav-icon">☰</span> Records</button>
+    </nav>
+    <div class="promo">
+      <span class="promo-badge">LOCAL</span>
+      <h3>On-device analysis</h3>
+      <p>CIELAB ΔE₇₆ and RBF ε-SVR stay in this browser. Nothing is uploaded.</p>
+      <button class="button primary" type="button" id="sidebarBackupHint">Keep a backup</button>
+    </div>
+  </aside>
+
+  <div class="app-frame">
+    <header class="topbar">
+      <div class="crumb">
+        <p class="eyebrow" id="pageEyebrow">CAPTURE</p>
+        <h1 class="page-title" id="pageTitle">Strip capture</h1>
+      </div>
+      <div class="topbar-tools">
+        <div class="offline"><i></i> Offline · data stays on this device</div>
+        <div class="model-chip warn" id="modelStatus">CALIBRATED</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero glass-hero" data-tilt data-reveal>
+        <div>
+          <p class="eyebrow">H₂S INDICATOR STRIP READER</p>
+          <p class="subtle">Reference-normalized CIELAB analysis with local SVR calibration for lead-acetate strips.</p>
+        </div>
+        <div class="hero-visual" aria-hidden="true"></div>
+      </section>
+
+      <section class="view active" id="capture">
+        <div class="grid capture-grid">
+          <article class="panel camera-panel" data-tilt data-reveal>
+            <div class="panel-head"><div><p class="eyebrow">CAMERA</p><h2>Capture pair</h2></div><span class="quality" id="captureQuality">Awaiting image</span></div>
+            <div class="camera-stage" id="cameraStage">
+              <video id="video" playsinline muted></video>
+              <canvas id="captureCanvas" aria-label="Captured strip image"></canvas>
+              <div class="empty-camera" id="cameraEmpty"><span>⌁</span><strong>Start camera or load a photo</strong><small>Place reacted and reference strips side by side under diffuse light.</small></div>
+            </div>
+            <div class="camera-actions"><button class="button primary" id="startCamera">Start camera</button><button class="button" id="takePhoto" disabled>Freeze frame</button><label class="button file-label">Load photo<input id="imageLoader" type="file" accept="image/*" /></label></div>
+            <div class="sampling-bar"><span>Sampling target:</span><button class="sample-mode active" data-sample="test">01 Test strip</button><button class="sample-mode" data-sample="reference">02 Reference strip</button><span class="hint">Click centre of each strip · 28 px median patch</span></div>
+          </article>
+          <aside class="panel analysis-panel" data-tilt data-reveal>
+            <div class="panel-head"><div><p class="eyebrow">CIELAB ANALYSIS</p><h2>Relative colour change</h2></div><span class="live-dot">LOCAL</span></div>
+            <div class="metric primary-metric"><span>ΔE<sub>76</sub></span><strong id="deltaE">—</strong><small>test vs reference</small></div>
+            <div class="lab-grid"><div><span>ΔL*</span><b id="dL">—</b></div><div><span>Δa*</span><b id="da">—</b></div><div><span>Δb*</span><b id="db">—</b></div></div>
+            <div class="estimate"><p class="eyebrow">SVR ESTIMATE</p><strong id="ppmEstimate">Calibration required</strong><span id="estimateDetail">Add 5+ certified samples to enable inference.</span></div>
+            <label class="field">Exposure duration for this frame <div class="input-unit"><input id="exposureMinutes" type="number" min="0.1" step="0.1" value="60" /><span>min</span></div></label>
+            <div class="dose-row"><span>Estimated frame dose</span><b id="doseEstimate">— ppm·h</b></div>
+            <button class="button primary wide" id="analyzeBtn" disabled>Analyse captured pair</button>
+            <button class="button wide" id="saveExposureBtn" disabled>Save to active shift</button>
+          </aside>
+        </div>
+        <article class="notice" data-reveal><b>Before relying on a result:</b> use matched strips and fixed exposure geometry; shield from glare; calibrate against known H₂S under the same paper, airflow, humidity, duration, and lighting protocol. This prototype is not a safety monitor.</article>
+      </section>
+
+      <section class="view" id="workers">
+        <div class="grid two-col">
+          <article class="panel" data-tilt data-reveal><div class="panel-head"><div><p class="eyebrow">WORKER REGISTER</p><h2>People on record</h2></div><button class="text-button" id="newWorker">+ Add worker</button></div><div id="workerList" class="worker-list"></div></article>
+          <article class="panel" data-tilt data-reveal><p class="eyebrow">ACTIVE SHIFT</p><h2 id="shiftWorkerName">No worker selected</h2><p class="subtle" id="shiftDescription">Choose a worker to begin a locally recorded shift.</p><div id="shiftControls"><button class="button primary" id="startShift" disabled>Start shift</button></div><div class="shift-total"><span>Cumulative dose</span><strong id="shiftDose">0.000 <small>ppm·h</small></strong><span id="shiftEvents">0 readings</span></div></article>
+        </div>
+        <dialog id="workerDialog"><form method="dialog" id="workerForm"><header><h2>Add worker</h2><button type="button" class="close" id="closeWorkerDialog">×</button></header><label class="field">Full name<input required id="workerName" placeholder="e.g. Arun Patel" /></label><label class="field">Employee ID <input id="workerId" placeholder="Optional" /></label><label class="field">Role / work area <input id="workerRole" placeholder="Optional" /></label><div class="dialog-actions"><button type="button" class="button" id="cancelWorkerDialog">Cancel</button><button type="submit" class="button primary">Save worker</button></div></form></dialog>
+      </section>
+
+      <section class="view" id="calibration">
+        <div class="grid two-col">
+          <article class="panel" data-tilt data-reveal><p class="eyebrow">LOCAL ε-SVR</p><h2>Build a strip-specific model</h2><p class="subtle">Capture a pair first, then label it with a certified reference concentration. The model uses normalized ΔL*, Δa*, Δb*, ΔE<sub>76</sub>, and duration.</p><div class="calibration-status" id="calibrationStatus">0 verified samples — minimum 5 needed</div><form id="calibrationForm"><label class="field">Certified H₂S concentration <div class="input-unit"><input id="knownPpm" type="number" min="0" step="0.01" required /><span>ppm</span></div></label><label class="field">Reference exposure duration <div class="input-unit"><input id="knownDuration" type="number" min="0.1" step="0.1" value="60" required /><span>min</span></div></label><button class="button primary wide" type="submit" id="addCalibration" disabled>Save current frame as calibration sample</button></form><button class="text-button danger" id="clearCalibration">Clear calibration model &amp; samples</button></article>
+          <article class="panel" data-tilt data-reveal><div class="panel-head"><div><p class="eyebrow">MODEL HEALTH</p><h2>Validation summary</h2></div></div><div class="health-grid"><div><span>Training samples</span><b id="sampleCount">0</b></div><div><span>Supports</span><b id="supportCount">—</b></div><div><span>Training MAE</span><b id="trainingMae">—</b></div></div><div class="chart-wrap"><canvas id="calibrationChart" width="520" height="220"></canvas><p class="chart-note">Observed vs local SVR fitted concentration (training set). Validate on held-out samples before field use.</p></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="records">
+        <div class="panel" data-tilt data-reveal><div class="panel-head"><div><p class="eyebrow">LOCAL AUDIT TRAIL</p><h2>Shift exposure records</h2></div><div class="toolbar"><button class="button" id="exportData">Backup JSON</button><label class="button file-label">Restore<input id="importData" type="file" accept="application/json" /></label></div></div><div class="table-wrap"><table><thead><tr><th>Worker</th><th>Shift</th><th>Readings</th><th>Cumulative dose</th><th>Status</th></tr></thead><tbody id="recordTable"></tbody></table></div></div>
+      </section>
+    </main>
+    <footer>On-device analysis · CIELAB ΔE<sub>76</sub> · RBF ε-SVR</footer>
+  </div>
+  <div id="toast" role="status"></div>
+  <script src="motion.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
