@@ -1,6 +1,7 @@
 # SIH2026-TRACE
 
 The repository of team TRACE for Smart India Hackathon 2026.
+Click on the green "code" button then download the .zip file. Extract the .zip file and run index.html to access the app.
 
 # TRACE
 
